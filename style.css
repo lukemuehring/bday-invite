@@ -1,0 +1,110 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "VT323", sans-serif;
+}
+
+html {
+  --font-size-sm: clamp(0.83rem, 0.44vw + 0.72rem, 1rem);
+  --font-size-base: clamp(1rem, 0.53vw + 0.87rem, 1.2rem);
+  --font-size-md: clamp(1.2rem, 0.64vw + 1.04rem, 1.44rem);
+  --font-size-lg: clamp(1.44rem, 0.77vw + 1.25rem, 1.73rem);
+  --font-size-xl: clamp(1.73rem, 0.92vw + 1.5rem, 2.07rem);
+  --font-size-xxl: clamp(2.07rem, 1.11vw + 1.8rem, 2.49rem);
+  --font-size-xxxl: clamp(2.49rem, 1.33vw + 2.16rem, 2.99rem);
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  align-content: space-around;
+  display: grid;
+  justify-content: center;
+  overflow: hidden;
+}
+
+body {
+  position: relative;
+}
+
+canvas {
+  background-color: black;
+  display: block;
+}
+
+.hidden {
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+}
+
+.container {
+  max-width: 100%;
+  width: 95%;
+  height: 50%;
+  overflow-x: hidden;
+}
+
+.slider-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+
+  -webkit-mask: linear-gradient(
+    90deg,
+    transparent,
+    white 5%,
+    white 95%,
+    transparent
+  );
+  mask: linear-gradient(90deg, transparent, white 5%, white 95%, transparent);
+}
+
+.image-list {
+  width: max-content;
+  height: 100%;
+  gap: 1rem;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  animation: scroll 30s linear infinite;
+}
+
+.slider-wrapper .image-list .image-item {
+  height: 100%;
+  padding-block: 1rem;
+  object-fit: cover;
+}
+
+.xModal {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 8px 16px;
+  border-width: 0;
+  vertical-align: middle;
+  text-align: center;
+  white-space: nowrap;
+  font-size: var(--font-size-md);
+  color: white;
+  background-color: black;
+  cursor: pointer;
+}
+
+.xModal:hover {
+  background-color: red;
+}
+
+@keyframes scroll {
+  to {
+    transform: translate(calc(-50% - 0.5rem));
+  }
+}
