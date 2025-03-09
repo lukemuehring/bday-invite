@@ -82,25 +82,23 @@ const Map = {
   },
 };
 
+
+if (c.canvas.height > Bg0.height) {
+  Map.rows = Math.ceil((c.canvas.height - Floor.height) / Map.tsize);
+}
+Map.tiles = new Array(Map.cols * Map.rows);
+Map.tiles.fill(0, 0, Map.cols);
+Map.tiles.fill(1, Map.cols);
+Map.length = Map.cols * Map.tsize;
+
 const Floor = {
   height:
     c.canvas.height > Bg0.height
       ? Bg0.height - 1.5 * Map.tsize
       : c.canvas.height - 1.5 * Map.tsize,
-  rightX: 0,
+  rightX: Map.length,
   leftX: -100,
 };
-
-if (c.canvas.height > Bg0.height) {
-  Map.rows = Math.ceil((c.canvas.height - Floor.height) / Map.tsize);
-}
-
-Map.tiles = new Array(Map.cols * Map.rows);
-Map.tiles.fill(0, 0, Map.cols);
-Map.tiles.fill(1, Map.cols);
-
-Map.length = Map.cols * Map.tsize;
-
 var numBgImages = Math.ceil(Map.length / Bg0.width) + 1;
 Bg0.locations = Array.from(
   { length: numBgImages },
@@ -125,7 +123,7 @@ const PlayerStates = {
   Walking: 2,
 };
 
-const spawnX = 100;
+const spawnX = c.canvas.width / 2;
 
 const Player = {
   x: spawnX,
@@ -153,7 +151,7 @@ function Camera(map, width, height) {
   this.width = width;
   this.height = height;
   this.minX = 0;
-  this.maxX = map.cols * map.tsize - width;
+  this.maxX = width;
 }
 
 Camera.prototype.follow = function (player) {
@@ -162,13 +160,9 @@ Camera.prototype.follow = function (player) {
 
 Camera.prototype.update = function () {
   this.following.screenX = this.width / 2;
-  this.x = this.following.x - this.width / 2;
-
-  this.x = Math.max(this.minX, Math.min(this.x, this.maxX));
-
   if (
-    this.following.x < this.width / 2 ||
-    this.following.x > this.maxX + this.width / 2
+    this.following.x < this.width / 2 
+    || this.following.x > this.maxX - this.width / 2
   ) {
     this.following.screenX = this.following.x - this.x;
     this.following.screenY = this.following.y - this.y;
@@ -253,13 +247,13 @@ function Text(words, x, y, fontSize) {
 
 cutOffFloorEdgesInMap(c);
 
-const welcome = "HEY, I'M LUKE";
-const welcomeText = new Text(
-  welcome,
-  Math.floor(c.canvas.width / 2),
-  c.canvas.height <= 730 ? 200 : c.canvas.height / 2,
-  calculateFontFitForLargeText(welcome, FontHeadingLevels.H1)
-);
+// const welcome = "HEY, I'M LUKE";
+// const welcomeText = new Text(
+//   welcome,
+//   Math.floor(c.canvas.width / 2),
+//   c.canvas.height <= 730 ? 200 : c.canvas.height / 2,
+//   calculateFontFitForLargeText(welcome, FontHeadingLevels.H1)
+// );
 
 function calculateFontFitForLargeText(text, initialFontSize) {
   c.save();
@@ -284,7 +278,7 @@ function calculateFontFitForLargeText(text, initialFontSize) {
 
 // arrowKeys.isVisible = false;
 
-var welcomeTextArray = [welcomeText];
+// var welcomeTextArray = [welcomeText];
 
 // Animation to mitigate FOUT and fade in
 var canShowText = false;
@@ -305,6 +299,35 @@ var animateText = false;
 var textAlpha = 0;
 
 const objectHeight = Math.floor(c.canvas.height * 0.2);
+
+let buttonClicked = false;
+
+function clickMeButtonClicked() {
+  console.log('ran logic')
+
+  if (!buttonClicked) {
+    buttonClicked = true;
+    Player.y = 0;
+    
+    button.disabled = true;
+    
+    setTimeout(() => {
+      bdayInvite.style.display = 'block';
+      bdayInvite.offsetHeight;
+      bdayInvite.classList.add('show');
+    }, 500); 
+    button.classList.add('fade-away');
+    
+
+
+  } else {
+    return;
+  }
+}
+
+
+
+
 
 /*
  * Animation Loop
@@ -385,12 +408,10 @@ function loop(timestamp) {
     ) {
       Player.y = Floor.height;
       Player.yVelocity = 0;
-      console.log('floor collision');
     }
 
-    // Constraining Player to x range [0, Map Size]
-    Player.x = Math.max(0, Math.min(Player.x, Map.cols * Map.tsize));
-
+    // Constraining Player to x range [0, Camera Width]
+    Player.x = Math.max(0, Math.min(Player.x, camera.width));
     camera.update();
 
     /*
@@ -418,16 +439,15 @@ function loop(timestamp) {
     /*
     * Text Draw
     */
-    for (let i = 0; i < welcomeTextArray.length; i++) {
-      welcomeTextArray[i].draw(c, welcomeTextArray[i]);
-    }
 
     c.restore();
 
     /*
     * Player Draw
     */
-    drawPlayer(c);
+   if (buttonClicked) {
+     drawPlayer(c);
+   }
 
     /*
     * Floor Draw
@@ -476,7 +496,7 @@ function loop(timestamp) {
    * Animation
    */
   window.requestAnimationFrame(loop);
- 
+
 };
 
 // ---------------------------------------------------------END ANIMATION LOOP----------------------------------------
@@ -528,11 +548,9 @@ function handleCanvasResize(context) {
   camera.width = window.innerWidth;
   camera.height = window.innerHeight;
 
-  resizeMap(context);
+  console.log(`new camera dimensions: ${camera.width}, ${camera.height}` );
 
-  for (let i = 0; i < textBubbleArray.length; i++) {
-    textBubbleArray[i].maxLineWidth = context.canvas.width / 1.3;
-  }
+  resizeMap(context);
 
   FontHeadingLevels.H1.value = context.canvas.width <= 500 ? 80 : 100;
   FontHeadingLevels.H2.value = context.canvas.width <= 500 ? 33 : 38;
@@ -658,20 +676,6 @@ function drawText(context, text) {
   );
 }
 
-function detectMouseHover(x, y, width, height) {
-  if (
-    Mouse.x >= x - width / 2 - camera.x &&
-    Mouse.x <= x + width / 2 - camera.x
-  ) {
-    if (Mouse.y >= y && Mouse.y < y + height) {
-      this.hover = true;
-      return true;
-    }
-  }
-  this.hover = false;
-  return false;
-}
-
 function drawFlippedImage(context, image, x, y) {
   context.save();
   context.translate(x + image.width / 2, 0);
@@ -682,10 +686,10 @@ function drawFlippedImage(context, image, x, y) {
 }
 
 function getFont(fontSize) {
-  
+
   if (document.fonts.check("12px 'VT323'")) {
     return fontSize + "px 'VT323'";
-  } 
+  }
   else {
     return fontSize - 8 + "px sans-serif";
   }
@@ -804,6 +808,12 @@ window.addEventListener("touchstart", handleTouchStart);
 window.addEventListener("touchend", handleTouchEnd);
 window.addEventListener("touchcancel", handleTouchCancel);
 window.addEventListener("touchmove", handleTouchMove);
+
+const button = document.querySelector('.click-me');
+const bdayInvite = document.querySelector('.bday-invite');
+// Add an event listener to the button
+button.addEventListener('click', clickMeButtonClicked);
+
 
 /* CREDITS
  * Free - Adventure Pack - Grassland by Anokolisa

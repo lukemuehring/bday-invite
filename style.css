@@ -34,6 +34,67 @@ canvas {
   display: block;
 }
 
+.body-container {
+  position: relative;
+}
+
+.overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  width: 30%; 
+  height: 30%; 
+}
+
+.click-me {
+  padding: 16px;
+  font-weight: bold;
+  font-size: x-large;
+  border-radius: 16px;
+  background-color: #EEE;
+
+  opacity: 1;
+  transition: background-color 0.03s ease, transform 0.01s ease, opacity 2s ease;
+}
+
+.click-me:hover {
+  background-color: #FFF;
+}
+
+.click-me:active {
+  transform: scale(0.98); 
+}
+
+.fade-away {
+  opacity: 0 !important;
+  transition: opacity 1s ease; 
+  position: absolute;
+}
+
+.show {
+  opacity: 1 !important;
+  transition: opacity 2s ease; 
+}
+
+.bday-invite {
+  display: none;
+  background-color: white;
+  border-radius: 16px;
+  border: solid 2px #666;
+  padding: 32px;
+
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+
+
+
+
 .hidden {
   position: absolute;
   overflow: hidden;
