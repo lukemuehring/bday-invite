@@ -2,7 +2,8 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: "VT323", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
 }
 
 html {
@@ -46,9 +47,9 @@ canvas {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); 
-  width: 30%; 
-  height: 30%; 
+  transform: translate(-50%, -50%);
+  width: 30%;
+  height: 30%;
 }
 
 .click-me {
@@ -56,44 +57,99 @@ canvas {
   font-weight: bold;
   font-size: x-large;
   border-radius: 16px;
-  background-color: #EEE;
+  background-color: #eee;
+
+  white-space: nowrap;
 
   opacity: 1;
   transition: background-color 0.03s ease, transform 0.01s ease, opacity 2s ease;
 }
 
 .click-me:hover {
-  background-color: #FFF;
+  background-color: #fff;
 }
 
 .click-me:active {
-  transform: scale(0.98); 
+  transform: scale(0.98);
 }
 
 .fade-away {
   opacity: 0 !important;
-  transition: opacity 1s ease; 
+  transition: opacity 1s ease;
   position: absolute;
 }
 
 .show {
   opacity: 1 !important;
-  transition: opacity 2s ease; 
+  transition: opacity 2s ease;
 }
 
 .bday-invite {
   display: none;
   background-color: white;
   border-radius: 16px;
-  border: solid 2px #666;
+  border: solid 2px #dadada;
   padding: 32px;
 
   opacity: 0;
   transition: opacity 2s ease;
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .name {
+    font-size: xx-large;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .body {
+    margin-top: 1rem;
+  }
+
+  .time {
+    margin-top: 1rem;
+    font-size: large;
+  }
+
+  .btns {
+    display: flex;
+    margin-top: 2rem;
+    gap: 0.5rem;
+
+    .btn {
+      padding: 16px;
+      font-weight: bold;
+      font-size: x-large;
+      border: 8px solid white;
+      border-radius: 12px;
+      color: white;
+      background-color: rgb(255 73 40);
+      white-space: nowrap;
+      transition: background-color 0.03s ease, transform 0.01s ease;
+      cursor: pointer; /* Retain clickable cursor */
+    }
+
+    .click-me:hover {
+      background-color: rgb(255, 75, 43);
+    }
+
+    .click-me:active {
+      transform: scale(0.98);
+    }
+  }
 }
 
-
-
+a {
+  text-decoration: none; /* Remove underline */
+  color: inherit; /* Use parent element's text color */
+}
 
 .hidden {
   position: absolute;
@@ -104,68 +160,4 @@ canvas {
   margin: -1px;
   padding: 0;
   border: 0;
-}
-
-.container {
-  max-width: 100%;
-  width: 95%;
-  height: 50%;
-  overflow-x: hidden;
-}
-
-.slider-wrapper {
-  display: flex;
-  justify-content: flex-start;
-  width: 100%;
-  height: 100%;
-
-  -webkit-mask: linear-gradient(
-    90deg,
-    transparent,
-    white 5%,
-    white 95%,
-    transparent
-  );
-  mask: linear-gradient(90deg, transparent, white 5%, white 95%, transparent);
-}
-
-.image-list {
-  width: max-content;
-  height: 100%;
-  gap: 1rem;
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  animation: scroll 30s linear infinite;
-}
-
-.slider-wrapper .image-list .image-item {
-  height: 100%;
-  padding-block: 1rem;
-  object-fit: cover;
-}
-
-.xModal {
-  position: absolute;
-  right: 0;
-  top: 0;
-  padding: 8px 16px;
-  border-width: 0;
-  vertical-align: middle;
-  text-align: center;
-  white-space: nowrap;
-  font-size: var(--font-size-md);
-  color: white;
-  background-color: black;
-  cursor: pointer;
-}
-
-.xModal:hover {
-  background-color: red;
-}
-
-@keyframes scroll {
-  to {
-    transform: translate(calc(-50% - 0.5rem));
-  }
 }

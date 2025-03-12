@@ -11,7 +11,7 @@ var imagePathArray = new Array(
   "./images/player/walk1_0.png",
   "./images/player/walk1_1.png",
   "./images/player/walk1_2.png",
-  "./images/player/walk1_3.png",
+  "./images/player/walk1_3.png"
 );
 
 var imageCache = {};
@@ -81,7 +81,6 @@ const Map = {
     return this.tiles[row * Map.cols + col];
   },
 };
-
 
 if (c.canvas.height > Bg0.height) {
   Map.rows = Math.ceil((c.canvas.height - Floor.height) / Map.tsize);
@@ -161,8 +160,8 @@ Camera.prototype.follow = function (player) {
 Camera.prototype.update = function () {
   this.following.screenX = this.width / 2;
   if (
-    this.following.x < this.width / 2 
-    || this.following.x > this.maxX - this.width / 2
+    this.following.x < this.width / 2 ||
+    this.following.x > this.maxX - this.width / 2
   ) {
     this.following.screenX = this.following.x - this.x;
     this.following.screenY = this.following.y - this.y;
@@ -283,7 +282,7 @@ function calculateFontFitForLargeText(text, initialFontSize) {
 // Animation to mitigate FOUT and fade in
 var canShowText = false;
 const fontInterval = setInterval(() => {
-  if (document.fonts.check("12px 'VT323'")) {
+  if (document.fonts.check("12px 'Segoe UI'")) {
     canShowText = true;
     animateText = true;
     clearInterval(fontInterval);
@@ -303,31 +302,81 @@ const objectHeight = Math.floor(c.canvas.height * 0.2);
 let buttonClicked = false;
 
 function clickMeButtonClicked() {
-  console.log('ran logic')
-
   if (!buttonClicked) {
     buttonClicked = true;
     Player.y = 0;
-    
+
     button.disabled = true;
-    
+
     setTimeout(() => {
-      bdayInvite.style.display = 'block';
+      bdayInvite.style.display = "block";
       bdayInvite.offsetHeight;
-      bdayInvite.classList.add('show');
-    }, 500); 
-    button.classList.add('fade-away');
-    
+      bdayInvite.classList.add("show");
+    }, 500);
+    button.classList.add("fade-away");
 
-
+    spawnConfetti();
   } else {
     return;
   }
 }
 
+function Conf(x, y, color, size) {
+  this.x = x;
+  this.y = y;
+  this.color = color;
+  this.size = size;
+}
 
+const confetti = [];
 
+function spawnConfetti() {
+  const numberOfConfetti = 500; // Number of confetti pieces to spawn
+  for (let i = 0; i < numberOfConfetti; i++) {
+    // Random position for each confetti
+    const x = Math.random() * c.canvas.width;
+    const y = Math.random() * c.canvas.height;
 
+    // Random color for each confetti
+    const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+
+    // Random size for each confetti
+    const size = Math.random() * 10 + 5;
+
+    const confettiPiece = new Conf(x, y, color, size);
+    confetti.push(confettiPiece);
+  }
+}
+
+function drawConf() {
+  c.save();
+
+  for (let i = 0; i < confetti.length; i++) {
+    // Draw the confetti rectangle
+    c.fillStyle = confetti[i].color;
+    c.fillRect(
+      confetti[i].x,
+      confetti[i].y,
+      confetti[i].size,
+      confetti[i].size / 2
+    );
+
+    //update pos
+    confetti[i].y++;
+    if (confetti[i].y > c.canvas.height) {
+      confetti[i].y = 0;
+    }
+  }
+  c.restore();
+}
+
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const message = urlParams.get("invite");
+const messageDisplay = document.getElementById("message-display");
+if (message) {
+  messageDisplay.textContent = message; // Displays "Hello World"
+}
 
 /*
  * Animation Loop
@@ -343,8 +392,8 @@ function loop(timestamp) {
     lastTime = timestamp - (deltaTime % frameDuration);
 
     /*
-    * Responsive Scaling
-    */
+     * Responsive Scaling
+     */
     if (
       window.innerWidth != c.canvas.width ||
       window.innerHeight != c.canvas.height
@@ -353,8 +402,8 @@ function loop(timestamp) {
     }
 
     /*
-    * Controller Input
-    */
+     * Controller Input
+     */
     if (Player.y > Floor.height && userInputIsAllowed) {
       userInputIsAllowed = false;
       setTimeout(() => {
@@ -384,8 +433,8 @@ function loop(timestamp) {
     }
 
     /*
-    * Gravity and Friction
-    */
+     * Gravity and Friction
+     */
     Player.yVelocity += Gravity;
     Player.x += Player.xVelocity;
     Player.y += Player.yVelocity;
@@ -399,8 +448,8 @@ function loop(timestamp) {
     Player.yVelocity += 0.9;
 
     /*
-    * Floor Collision
-    */
+     * Floor Collision
+     */
     if (
       Player.y > Floor.height &&
       Player.x < Floor.rightX &&
@@ -415,8 +464,8 @@ function loop(timestamp) {
     camera.update();
 
     /*
-    * Background Draw
-    */
+     * Background Draw
+     */
     c.save();
     c.fillStyle = "rgb(" + Bg1.color + ")";
     c.fillRect(0, 0, c.canvas.width, c.canvas.height);
@@ -425,8 +474,8 @@ function loop(timestamp) {
     drawBackground(c, Bg0);
     drawBackground(c, Bg1);
     /*
-    * Text Alpha
-    */
+     * Text Alpha
+     */
     c.save();
     if (animateText) {
       c.globalAlpha = 100 * textAlpha ** 3;
@@ -437,21 +486,25 @@ function loop(timestamp) {
     }
 
     /*
-    * Text Draw
-    */
+     * Text Draw
+     */
 
     c.restore();
 
-    /*
-    * Player Draw
-    */
-   if (buttonClicked) {
-     drawPlayer(c);
-   }
+    if (buttonClicked) {
+      drawConf();
+    }
 
     /*
-    * Floor Draw
-    */
+     * Player Draw
+     */
+    if (buttonClicked) {
+      drawPlayer(c);
+    }
+
+    /*
+     * Floor Draw
+     */
     var startCol = Math.floor(camera.x / Map.tsize);
     var endCol = startCol + camera.width / Map.tsize + 2;
     var offsetX = -camera.x + startCol * Map.tsize;
@@ -481,9 +534,9 @@ function loop(timestamp) {
     //   Mouse.x > Player.screenX - Player.width / 2 &&
     //   Mouse.x < Player.screenX + Player.width / 2
     // ) {
-      // if (Mouse.y > Player.screenY - Player.height && Mouse.y < Player.screenY) {
-      //   scrambleDrawPixelsAtMouse(c);
-      // }
+    // if (Mouse.y > Player.screenY - Player.height && Mouse.y < Player.screenY) {
+    //   scrambleDrawPixelsAtMouse(c);
+    // }
     // }
 
     FrameCount++;
@@ -496,8 +549,7 @@ function loop(timestamp) {
    * Animation
    */
   window.requestAnimationFrame(loop);
-
-};
+}
 
 // ---------------------------------------------------------END ANIMATION LOOP----------------------------------------
 
@@ -548,7 +600,7 @@ function handleCanvasResize(context) {
   camera.width = window.innerWidth;
   camera.height = window.innerHeight;
 
-  console.log(`new camera dimensions: ${camera.width}, ${camera.height}` );
+  console.log(`new camera dimensions: ${camera.width}, ${camera.height}`);
 
   resizeMap(context);
 
@@ -686,11 +738,9 @@ function drawFlippedImage(context, image, x, y) {
 }
 
 function getFont(fontSize) {
-
-  if (document.fonts.check("12px 'VT323'")) {
-    return fontSize + "px 'VT323'";
-  }
-  else {
+  if (document.fonts.check("12px 'Segoe UI'")) {
+    return fontSize + "px 'Segoe UI'";
+  } else {
     return fontSize - 8 + "px sans-serif";
   }
 }
@@ -715,7 +765,6 @@ function updateMousePosition(event) {
     Mouse.dy = Mouse.y - Mouse.prevY;
   }
 }
-
 
 // todo fix
 function movePlayerToScreenCoords(x, y) {
@@ -809,11 +858,10 @@ window.addEventListener("touchend", handleTouchEnd);
 window.addEventListener("touchcancel", handleTouchCancel);
 window.addEventListener("touchmove", handleTouchMove);
 
-const button = document.querySelector('.click-me');
-const bdayInvite = document.querySelector('.bday-invite');
+const button = document.querySelector(".click-me");
+const bdayInvite = document.querySelector(".bday-invite");
 // Add an event listener to the button
-button.addEventListener('click', clickMeButtonClicked);
-
+button.addEventListener("click", clickMeButtonClicked);
 
 /* CREDITS
  * Free - Adventure Pack - Grassland by Anokolisa
@@ -822,6 +870,6 @@ button.addEventListener('click', clickMeButtonClicked);
 
 /*  TODO
  * improve the graphics for the story
-* replace text bubble with actual html
+ * replace text bubble with actual html
  * add links for resume, github, and linked in (near the front)
  */
